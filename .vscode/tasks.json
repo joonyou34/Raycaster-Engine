@@ -1,0 +1,52 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "build-debug",
+        "type": "shell",
+        "command": "gcc",
+        "args": [
+            "-g",              // Debug information
+            "src/main.c",     // Updated path to source file
+            "-o",
+            "build/main-debug.exe",  // Updated path for debug executable
+            "-I${workspaceFolder}/include",   // Include path
+            "-I${workspaceFolder}/headers",   // Include path
+            "-L${workspaceFolder}/lib",   // Library path
+          "-lfreeglut",
+          "-lopengl32",
+          "-lglu32"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": ["$gcc"],
+        "detail": "Build in Debug mode"
+      },
+      {
+        "label": "build-release",
+        "type": "shell",
+        "command": "gcc",
+        "args": [
+          "-O3",             // Optimization flag for release mode
+          "src/main.c",     // Updated path to source file
+          "-o",
+          "build/main-release.exe",  // Updated path for release executable
+          "-I${workspaceFolder}/include",   // Include path
+          "-I${workspaceFolder}/headers",   // Include path
+          "-L${workspaceFolder}/lib",   // Library path
+          "-lfreeglut",
+          "-lopengl32",
+          "-lglu32"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": false
+        },
+        "problemMatcher": ["$gcc"],
+        "detail": "Build in Release mode"
+      }
+    ]
+  }
+  
