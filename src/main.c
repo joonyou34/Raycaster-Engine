@@ -110,14 +110,14 @@ void PL_render(struct Player* p) {
 
     glColor3ub(235, 180, 30);
     glBegin(GL_TRIANGLES);
-    glVertex2i(p->x - 30, p->y - 50); 
-    glVertex2i(p->x - 30, p->y);     
-    glVertex2i(p->x-5, p->y - 30);
+    glVertex2i(p->x - 30*cosf(p->thetaX), p->y - 50*sinf(p->thetaX)); 
+    glVertex2i(p->x - 30*cosf(p->thetaX), p->y);     
+    glVertex2i(p->x-5*cosf(p->thetaX), p->y - 30*sinf(p->thetaX));
 
 
-    glVertex2i(p->x + 30, p->y - 50); 
-    glVertex2i(p->x + 30, p->y);      
-    glVertex2i(p->x+5, p->y - 30);    
+    glVertex2i(p->x + 30*cosf(p->thetaX), p->y - 50*sinf(p->thetaX)); 
+    glVertex2i(p->x + 30*cosf(p->thetaX), p->y);      
+    glVertex2i(p->x+5*cosf(p->thetaX), p->y - 30*sinf(p->thetaX));    
     glEnd();
 
 
@@ -128,15 +128,15 @@ void PL_render(struct Player* p) {
     glColor3ub(0, 0, 0); 
     glPointSize(3);
     glBegin(GL_POINTS);
-    glVertex2i(p->x-10, p->y-15);
-    glVertex2i(p->x+10, p->y-15);
+    glVertex2i(p->x-10*cosf(p->thetaX), p->y-15*sinf(p->thetaX));
+    glVertex2i(p->x+10*cosf(p->thetaX), p->y-15*sinf(p->thetaX));
     glEnd();
 
     glColor3ub(127, 0, 25); 
     glBegin(GL_TRIANGLES);
-    glVertex2i(p->x - 7, p->y + 5); 
-    glVertex2i(p->x + 7, p->y + 5);     
-    glVertex2i(p->x , p->y + 20);  
+    glVertex2i(p->x - 7*cosf(p->thetaX), p->y + 5*sinf(p->thetaX)); 
+    glVertex2i(p->x + 7*cosf(p->thetaX), p->y + 5*sinf(p->thetaX));     
+    glVertex2i(p->x , p->y + 20*sinf(p->thetaX));  
     glEnd();
 }
 
