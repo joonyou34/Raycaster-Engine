@@ -100,7 +100,6 @@ void PL_Controls(struct Player* p, unsigned char key, bool pressed) {
 // the bob function (very important) (DONT DELETE)
 void PL_render(struct Player* p) {
     
-
     const int lineLen = 75;
     glColor3ub(255, 0, 0); 
     glBegin(GL_LINES);
@@ -140,6 +139,34 @@ void PL_render(struct Player* p) {
     glEnd();
 }
 
+void PL_HitboxRender(struct Player* p) {
+    float halfW = p->width * 0.5f, halfH = p->height * 0.5f;
+
+    glColor4ub(255, 0, 0, 127);
+    glBegin(GL_QUADS);
+    glVertex2f(p->x - halfW, p->y - halfH); // top left
+    glVertex2f(p->x + halfW, p->y - halfH); // top right
+    glVertex2f(p->x + halfW, p->y + halfH); // bottom right
+    glVertex2f(p->x - halfW, p->y + halfH); // bottom left
+    glEnd();
+
+    //white dots for tile checks
+    int cellXi = (((p->x - halfW)/BASE_WIDTH)*(MAP_X)),
+        cellXf = (((p->x + halfW)/BASE_WIDTH)*(MAP_X)),
+        cellYi = (((p->y - halfH)/BASE_HEIGHT)*(MAP_Y)),
+        cellYf = (((p->y + halfH)/BASE_HEIGHT)*(MAP_Y));
+    cellXi = max(cellXi, 0), cellYi = max(cellYi, 0);
+    cellXf = min(cellXf, MAP_X-1), cellYf = min(cellYf, MAP_Y-1);
+    glColor3ub(255, 255, 255); 
+    glPointSize(3);
+    glBegin(GL_POINTS);
+    glVertex2i(cellXi*squareWidth + squareWidth/2, cellYi*squareWidth + squareWidth/2);
+    glVertex2i(cellXf*squareWidth + squareWidth/2, cellYi*squareWidth + squareWidth/2);
+    glVertex2i(cellXi*squareWidth + squareWidth/2, cellYf*squareWidth + squareWidth/2);
+    glVertex2i(cellXf*squareWidth + squareWidth/2, cellYf*squareWidth + squareWidth/2);
+    glEnd();
+}
+
 // initializes all important player variables
 void PL_Init(struct Player* p) {
     p->x = BASE_WIDTH/2.f;
@@ -159,25 +186,23 @@ void PL_Init(struct Player* p) {
     p->height = 40;
 }
 
+//can be optimized to iterate over the outline of the square only (if hitbox will be greater than a single grid)
 bool PL_WallCollision(struct Player* p) {
-    int cellX = round((p->x/BASE_WIDTH)*(MAP_X-1)), cellY = round((p->y/BASE_HEIGHT)*(MAP_Y-1));
     float halfW = p->width * 0.5f, halfH = p->height * 0.5f;
-
-    int limI = min(cellY+2, MAP_Y);
-    int limJ = min(cellX+2, MAP_X);
-    for(int y = max(cellY-1, 0); y < limI; y++) {
-        for(int x = max(cellX-1, 0); x < limJ; x++) {
-            if (map[y][x]) {
-                float wallX = x * squareWidth;
-                float wallY = y * squareHeight;
-                if (p->x - halfW < wallX + squareWidth &&
-                    p->x + halfW > wallX &&
-                    p->y - halfH < wallY + squareHeight &&
-                    p->y + halfH > wallY)
-                    return 1;
-            }
+    int cellXi = (((p->x - halfW)/BASE_WIDTH)*(MAP_X)),
+        cellXf = (((p->x + halfW)/BASE_WIDTH)*(MAP_X)),
+        cellYi = (((p->y - halfH)/BASE_HEIGHT)*(MAP_Y)),
+        cellYf = (((p->y + halfH)/BASE_HEIGHT)*(MAP_Y));
+    cellXi = max(cellXi, 0), cellYi = max(cellYi, 0);
+    cellXf = min(cellXf, MAP_X-1), cellYf = min(cellYf, MAP_Y-1);
+    printf("%d %d %d %d %d %d\n", cellXi, cellXf, cellYi, cellYf, (int)squareHeight, (int)squareWidth);
+    for(int x = cellXi; x <= cellXf; x++) {
+        for(int y = cellYi; y <= cellYf; y++) {
+            if(map[y][x])
+                return 1;
         }
     }
+
     return 0;
 }
 
@@ -220,10 +245,10 @@ void MP_render()
             {
                 glColor3ub(127,0,127);
                 glBegin(GL_QUADS);
-                glVertex2f(x * squareWidth+1, y * squareHeight+1); // bottom left
-                glVertex2f((x + 1)  * squareWidth-1, y * squareHeight+1); // bottom right
-                glVertex2f((x + 1) * squareWidth-1, (y + 1) * squareHeight-1); // top right
-                glVertex2f(x * squareWidth+1, (y + 1) * squareHeight-1); // top left
+                glVertex2f(x * squareWidth+1, y * squareHeight+1); // top left
+                glVertex2f((x + 1)  * squareWidth-2, y * squareHeight+1); // top right
+                glVertex2f((x + 1) * squareWidth-2, (y + 1) * squareHeight-2); // bottom right
+                glVertex2f(x * squareWidth+1, (y + 1) * squareHeight-2); // bottom left
                 glEnd();
             }
         }
@@ -243,12 +268,15 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     PL_render(&player1);
     MP_render();
+    PL_HitboxRender(&player1); //for debugging purposes
     glutSwapBuffers();
 }
 
 void init() {
     glClearColor(0, 0, 0, 0);
     gluOrtho2D(0, BASE_WIDTH, BASE_HEIGHT, 0);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     PL_Init(&player1);
 }
 
