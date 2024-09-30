@@ -7,7 +7,7 @@
         "command": "gcc",
         "args": [
             "-g",              // Debug information
-            "src/main.c",     // Updated path to source file
+            "src/*.c",     // Updated path to source file
             "-o",
             "build/main-debug.exe",  // Updated path for debug executable
             "-I${workspaceFolder}/include",   // Include path
@@ -30,7 +30,7 @@
         "command": "gcc",
         "args": [
           "-O3",             // Optimization flag for release mode
-          "src/main.c",     // Updated path to source file
+          "src/*.c",     // Updated path to source file
           "-o",
           "build/main-release.exe",  // Updated path for release executable
           "-I${workspaceFolder}/include",   // Include path
