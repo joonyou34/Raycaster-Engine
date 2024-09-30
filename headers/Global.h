@@ -13,7 +13,7 @@
 #define BASE_HEIGHT 600
 #define PI 3.1415926f
 #define TWO_PI 6.2831852f
-#define bool boolean
+typedef boolean bool;
 
 
 //deltaTime in ms
