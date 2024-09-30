@@ -110,7 +110,6 @@ bool PL_WallCollision(struct Player* p) {
         cellYf = (((p->y + halfH)/BASE_HEIGHT)*(MAP_Y));
     cellXi = max(cellXi, 0), cellYi = max(cellYi, 0);
     cellXf = min(cellXf, MAP_X-1), cellYf = min(cellYf, MAP_Y-1);
-    printf("%d %d %d %d %d %d\n", cellXi, cellXf, cellYi, cellYf, (int)squareHeight, (int)squareWidth);
     for(int x = cellXi; x <= cellXf; x++) {
         for(int y = cellYi; y <= cellYf; y++) {
             if(map[y][x])
