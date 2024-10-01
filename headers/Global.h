@@ -28,4 +28,10 @@ extern unsigned int dtMs;
 //deltaTime in seconds
 extern float dt;
 
+extern int stkPtr;
+extern float stkX1[BASE_WIDTH+10];
+extern float stkY1[BASE_WIDTH+10];
+extern float stkX2[BASE_WIDTH+10];
+extern float stkY2[BASE_WIDTH+10];
+
 #endif

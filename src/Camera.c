@@ -45,9 +45,8 @@ struct HitData CAM_Ray_Cast(double posX, double posY, double rayDirX, double ray
             rayLenX += deltaDistX, curX += stepX, side = 0;
         else
             rayLenY += deltaDistY, curY += stepY, side = 1;
-        
-        // printf("%d %d\n", curX, curY);
-        if(map[curY][curX] >= 1 && map[curY][curX] < 255) hit = 1;
+
+        if(map[curY][curX]) hit = 1;
         // else
         //     map[curY][curX] = 255;
     }
@@ -74,8 +73,7 @@ void CAM_Render(struct Camera* cam){
 
     for(int i = 0; i < MAP_X; i++)
         for(int j = 0; j < MAP_Y; j++)
-            if(map[j][i] > 0 && map[j][i] < 255) map[j][i] = 1;
-            else map[j][i] = 0;
+            if(map[j][i] > 0) map[j][i] = 1;
 
     static int cnt = 0;
     cnt++;
@@ -92,8 +90,14 @@ void CAM_Render(struct Camera* cam){
         double dx = cam->dirX + cam->planeX * cameraX, dy = cam->dirY + cam->planeY * cameraX;
         double dv = sqrt(dx*dx+dy*dy);
         dx/=dv, dy/=dv;
-        dx*=blockHit.distance, dy *= blockHit.distance;
-        
+        dx*=blockHit.distance*squareHeight*dv, dy *= blockHit.distance*squareWidth*dv;
+        dx += cam->posX;
+        dy += cam->posY;
+        // if(cnt%120 == 0)
+        // printf("%f %f\n", dx, dy);
+        stkX1[stkPtr] = cam->posX, stkY1[stkPtr] = cam->posY;
+        stkX2[stkPtr] = dx, stkY2[stkPtr] = dy;
+        stkPtr++;
 
 
         glColor3ub(0, 0, 255 - blockHit.side * 155);

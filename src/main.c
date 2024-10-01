@@ -41,6 +41,15 @@ void TD_display() {
     MP_render();
     PL_HitboxRender(&player1); //for debugging purposes
 
+    for(int i = 0; i < stkPtr; i++) {
+        glColor3ub(255, 0, 0);
+        glBegin(GL_LINES);
+        glVertex2f(stkX1[i], stkY1[i]);
+        glVertex2f(stkX2[i], stkY2[i]);
+        glEnd();
+    }
+    stkPtr = 0;
+
     glutSwapBuffers();
 }
 
