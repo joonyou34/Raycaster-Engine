@@ -31,7 +31,7 @@ void PL_render(struct Player* p) {
 
     glVertex2i(p->x + 30*cosf(p->thetaX), p->y - 50*sinf(p->thetaX)); 
     glVertex2i(p->x + 30*cosf(p->thetaX), p->y);      
-    glVertex2i(p->x+5*cosf(p->thetaX), p->y - 30*sinf(p->thetaX));    
+    glVertex2i(p->x+5*cosf(p->thetaX), p->y - 30*sinf(p->thetaX));
     glEnd();
 
 
@@ -120,7 +120,7 @@ bool PL_WallCollision(struct Player* p) {
     return 0;
 }
 
-void PL_Move(struct Player* p)
+void PL_Move(struct Player* p, struct Camera* cam)
 {
     if(p->LEFT_HOLD)
         p->thetaX-= p->sensitivityX*dt;
@@ -145,4 +145,6 @@ void PL_Move(struct Player* p)
     p->y += dy;
     if(PL_WallCollision(p))
         p->y -= dy;
+    
+    CAM_followPlayer(cam, p);
 }

@@ -5,6 +5,8 @@
         "freeglut_std.h": "c",
         "player.h": "c",
         "global.h": "c",
-        "gl.h": "c"
+        "gl.h": "c",
+        "system.h": "c",
+        "map.h": "c"
     }
 }
