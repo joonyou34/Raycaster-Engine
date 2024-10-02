@@ -14,7 +14,7 @@ struct Camera {
 };
 
 struct HitData{ // *not hitman related*
-    bool  side;
+    int  side;
     int   hit_block_x, hit_block_y;
     double distance;
 };

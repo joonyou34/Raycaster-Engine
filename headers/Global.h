@@ -34,4 +34,6 @@ extern float stkY1[BASE_WIDTH+10];
 extern float stkX2[BASE_WIDTH+10];
 extern float stkY2[BASE_WIDTH+10];
 
+#define swap(a, b, type) {type temp = a; a = b, b = temp;}
+
 #endif

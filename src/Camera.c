@@ -2,109 +2,109 @@
 #include "System.h"
 #include "Map.h"
 
-void CAM_init(struct Camera* cam) {
-    cam->posX = BASE_WIDTH / 2.f;
-    cam->posY = BASE_HEIGHT / 2.f;
-    cam->dirX = -1, cam->dirY = 0;
-    cam->planeX = 0, cam->planeY = 0.66;
-    cam->FOV = RAD_90;
-}
-
 struct HitData CAM_Ray_Cast(double posX, double posY, double rayDirX, double rayDirY){
+    swap(posX, posY, double);
+    swap(rayDirX, rayDirY, double);
+    struct HitData ret;
 
-    int curX = (int)posX, curY = (int)posY;
+    ret.hit_block_x = (int)posX;
+    ret.hit_block_y = (int)posY;
 
-    //length of ray from current position to next x or y-side
-    double rayLenX, rayLenY;
+    double totalDistX;
+    double totalDistY;
 
-    //length of ray from one x or y-side to next x or y-side
-    double deltaDistX = (rayDirX == 0) ? 1e30 : abs(1 / rayDirX);
-    double deltaDistY = (rayDirY == 0) ? 1e30 : abs(1 / rayDirY);
-    
-    double perpWallDist;
+    double deltaDistX = fabs(1/rayDirX);
+    double deltaDistY = fabs(1/rayDirY);
 
-    //what direction to step in x or y-direction (either +1 or -1)
     int stepX;
     int stepY;
 
-    int hit = 0; //was there a wall hit?
-    int side; //was a NS or a EW wall hit?
 
-    if (rayDirX < 0)
-        stepX = -1, rayLenX = (posX - curX) * deltaDistX;
-    else
-        stepX = 1, rayLenX = (curX + 1.0 - posX) * deltaDistX;
-
-    if (rayDirY < 0)
-        stepY = -1, rayLenY = (posY - curY) * deltaDistY;
-    else
-        stepY = 1, rayLenY = (curY + 1.0 - posY) * deltaDistY;
-
-    while(!hit){
-        if(rayLenX < rayLenY)
-            rayLenX += deltaDistX, curX += stepX, side = 0;
-        else
-            rayLenY += deltaDistY, curY += stepY, side = 1;
-
-        if(map[curY][curX]) hit = 1;
-        // else
-        //     map[curY][curX] = 255;
+    if(rayDirX < 0) {
+        stepX = -1;
+        totalDistX = (posX-ret.hit_block_x)*deltaDistX;
     }
-        // printf("\n");
+    else {
+        stepX = 1;
+        totalDistX = (ret.hit_block_x + 1.0 - posX)*deltaDistX;
+    }
+    if(rayDirY < 0) {
+        stepY = -1;
+        totalDistY = (posY-ret.hit_block_y)*deltaDistY;
+    }
+    else {
+        stepY = 1;
+        totalDistY = (ret.hit_block_y + 1.0 - posY)*deltaDistY;
+    }
 
-    struct HitData blockHit;
-    blockHit.hit_block_x = curX;
-    blockHit.hit_block_y = curY;
+    while(1) {
+        if(totalDistX < totalDistY) {
+            totalDistX += deltaDistX;
+            ret.hit_block_x += stepX;
+            ret.side = 0;
+        }
+        else if(totalDistX > totalDistY) {
+            totalDistY += deltaDistY;
+            ret.hit_block_y += stepY;
+            ret.side = 1;
+        }
+        else{
+            totalDistX += deltaDistX;
+            ret.hit_block_x += stepX;
+            totalDistY += deltaDistY;
+            ret.hit_block_y += stepY;
+            ret.side = 0;
+        }
 
-    if(side == 0) perpWallDist = (rayLenX - deltaDistX);
-    else perpWallDist = (rayLenY - deltaDistY);
+        if(map[ret.hit_block_x][ret.hit_block_y]) {
+            if(ret.side == 0)
+                ret.distance = (totalDistX-deltaDistX);
+            else
+                ret.distance = (totalDistY-deltaDistY);
+            map[ret.hit_block_x][ret.hit_block_y] = min(((int)(ret.distance*10))+2, 255);
+            break;
+        }
+    }
 
-    if(map[curY][curX] == 1)
-        map[curY][curX] = min(perpWallDist*10 + 2, 254);
-    else map[curY][curX] = min(map[curY][curX], min(perpWallDist*10 + 2, 254));
-
-    blockHit.distance = perpWallDist;
-    blockHit.side = side;
-
-    return blockHit;
+    if(ret.side == 0)
+        ret.distance = (totalDistX-deltaDistX);
+    else
+        ret.distance = (totalDistY-deltaDistY);
+    
+    return ret;
 }
 
 void CAM_Render(struct Camera* cam){
-
-    for(int i = 0; i < MAP_X; i++)
+    for(int i = 0; i < MAP_X; i++) {
         for(int j = 0; j < MAP_Y; j++)
-            if(map[j][i] > 0) map[j][i] = 1;
+            if(map[j][i])
+                map[j][i] = 1;
+    }
+    for(int ray = 0; ray < BASE_WIDTH; ray++) {
+        double camX = 2*ray/(double)BASE_WIDTH -1;
+        double rayDirX = cam->dirX + cam->planeX * camX;
+        double rayDirY = cam->dirY + cam->planeY * camX;
 
-    static int cnt = 0;
-    cnt++;
-    // if(cnt % 60 == 0)
-    //     printf("PLANE: %f %f DIR: %f %f\n", cam->planeX, cam->planeY, cam->dirX, cam->dirY);
+        struct HitData hitdata = CAM_Ray_Cast(cam->posX/squareWidth, cam->posY/squareHeight, rayDirX, rayDirY);
 
-    for(int x = 0; x <= BASE_WIDTH; x++) {
-        double cameraX = ((2 * x) / (double)BASE_WIDTH) - 1; //x-coordinate in camera space
-        struct HitData blockHit = CAM_Ray_Cast(cam->posX/squareWidth, cam->posY/squareHeight, cam->dirX + cam->planeX * cameraX, cam->dirY + cam->planeY * cameraX);
+        int lineHeight = (int)(BASE_HEIGHT/hitdata.distance);
+        int drawStart = max((BASE_HEIGHT - lineHeight)>>1, 0);
+        int drawEnd = min((BASE_HEIGHT + lineHeight)>>1, BASE_HEIGHT-1);
 
-        // if(cnt % 1000 == 0)
-        //     printf("%f %d %d %d rayDir: %f %f\n", blockHit.distance, blockHit.hit_block_x, blockHit.hit_block_y, blockHit.side, cam->dirX + cam->planeX * cameraX, cam->dirY + cam->planeY * cameraX);
-        
-        double dx = cam->dirX + cam->planeX * cameraX, dy = cam->dirY + cam->planeY * cameraX;
-        double dv = sqrt(dx*dx+dy*dy);
-        dx/=dv, dy/=dv;
-        dx*=blockHit.distance*squareHeight*dv, dy *= blockHit.distance*squareWidth*dv;
-        dx += cam->posX;
-        dy += cam->posY;
-        // if(cnt%120 == 0)
-        // printf("%f %f\n", dx, dy);
-        stkX1[stkPtr] = cam->posX, stkY1[stkPtr] = cam->posY;
-        stkX2[stkPtr] = dx, stkY2[stkPtr] = dy;
+        stkX1[stkPtr] = cam->posX;
+        stkY1[stkPtr] = cam->posY;
+        double dv = sqrt(rayDirX*rayDirX + rayDirY*rayDirY);
+        double dx = rayDirX, dy = rayDirY;
+        dx *= hitdata.distance*squareHeight, dy *= hitdata.distance*squareHeight;
+        dx += cam->posX, dy += cam->posY;
+        stkX2[stkPtr] = dx;
+        stkY2[stkPtr] = dy;
         stkPtr++;
 
-
-        glColor3ub(0, 0, 255 - blockHit.side * 155);
+        glColor3ub(0, 0, (127<<hitdata.side));
         glBegin(GL_LINES);
-        double height = min(BASE_HEIGHT / blockHit.distance, BASE_HEIGHT-1);
-        glVertex2i(x, BASE_HEIGHT/2 - height/2);
-        glVertex2i(x, BASE_HEIGHT/2 + height/2);
+        glVertex2d(ray, drawStart);
+        glVertex2d(ray, drawEnd);
         glEnd();
     }
 }
@@ -115,6 +115,14 @@ void CAM_setDirection(struct Camera* cam, double theta) {
     double planeSize = tan(cam->FOV/2.0); //FOV = 2*atan(planeSize), planeSize = tan(FOV/2)
     cam->planeX = -cam->dirY * planeSize; 
     cam->planeY = cam->dirX * planeSize;
+    //printf("%f %f\n", cam->planeX, cam->planeY);
+}
+
+void CAM_init(struct Camera* cam) {
+    cam->posX = BASE_WIDTH / 2.f;
+    cam->posY = BASE_HEIGHT / 2.f;
+    cam->FOV = RAD_90;
+    CAM_setDirection(cam, 0);
 }
 
 void CAM_followPlayer(struct Camera* cam, struct Player* p) {
