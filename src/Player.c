@@ -131,20 +131,23 @@ void PL_Move(struct Player* p, struct Camera* cam)
         p->thetaX += TWO_PI;
 
     
-    float d = 0;
+    float deltaMove = 0;
     if(p->UP_HOLD)
-        d+=p->v*dt;
+        deltaMove+=p->v*dt;
     if(p->DOWN_HOLD)
-        d-=p->v*dt;
+        deltaMove-=p->v*dt;
+
     
-    float dx = d*cosf(p->thetaX);
-    float dy = d*sinf(p->thetaX); 
+    
+    float dx = deltaMove*cosf(p->thetaX);
+    float dy = deltaMove*sinf(p->thetaX); 
     p->x += dx;
     if(PL_WallCollision(p))
         p->x -= dx;
     p->y += dy;
     if(PL_WallCollision(p))
         p->y -= dy;
+    
     
     CAM_followPlayer(cam, p);
 }

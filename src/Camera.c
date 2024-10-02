@@ -3,8 +3,8 @@
 #include "Map.h"
 
 struct HitData CAM_Ray_Cast(double posX, double posY, double rayDirX, double rayDirY){
-    swap(posX, posY, double);
-    swap(rayDirX, rayDirY, double);
+    swap(posX, posY);
+    swap(rayDirX, rayDirY);
     struct HitData ret;
 
     ret.hit_block_x = (int)posX;
@@ -88,8 +88,8 @@ void CAM_Render(struct Camera* cam){
         struct HitData hitdata = CAM_Ray_Cast(cam->posX/squareWidth, cam->posY/squareHeight, rayDirX, rayDirY);
 
         int lineHeight = (int)(BASE_HEIGHT/hitdata.distance);
-        int drawStart = max((BASE_HEIGHT - lineHeight)>>1, 0);
-        int drawEnd = min((BASE_HEIGHT + lineHeight)>>1, BASE_HEIGHT-1);
+        int drawStart = ((BASE_HEIGHT - lineHeight)>>1);
+        int drawEnd = ((BASE_HEIGHT + lineHeight)>>1);
 
         stkX1[stkPtr] = cam->posX;
         stkY1[stkPtr] = cam->posY;
@@ -115,7 +115,6 @@ void CAM_setDirection(struct Camera* cam, double theta) {
     double planeSize = tan(cam->FOV/2.0); //FOV = 2*atan(planeSize), planeSize = tan(FOV/2)
     cam->planeX = -cam->dirY * planeSize; 
     cam->planeY = cam->dirX * planeSize;
-    //printf("%f %f\n", cam->planeX, cam->planeY);
 }
 
 void CAM_init(struct Camera* cam) {

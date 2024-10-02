@@ -7,10 +7,10 @@
 struct Player;
 
 struct Camera {
-    float posX, posY; //player position
+    float posX, posY;
     double FOV;
-    double dirX, dirY; //direction vector
-    double planeX, planeY; //the 2d raycaster version of camera plane
+    double dirX, dirY; 
+    double planeX, planeY;
 };
 
 struct HitData{ // *not hitman related*
