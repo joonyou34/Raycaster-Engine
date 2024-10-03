@@ -13,8 +13,11 @@
 #include "Player.h"
 #include "Map.h"
 #include "System.h"
+#include "Entity.h"
+#include "STLS.h"
 
 struct Player player1;
+struct Entity *E1[];
 
 void keyPress(unsigned char key, int x, int y)
 {
@@ -39,6 +42,7 @@ void display()
     PL_render(&player1);
     MP_render();
     PL_HitboxRender(&player1); // for debugging purposes
+    ET_Render(E1);
     glutSwapBuffers();
 }
 
@@ -66,12 +70,18 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowSize(BASE_WIDTH, BASE_HEIGHT);
     glutCreateWindow("Smiling Bob");
+    Vector v;
+    initVector(&v, 2);
+    push_Back(&v, 10);
+    printf("The element id: %d", getElement(&v, 0));
     init();
     glutPassiveMotionFunc(mouseMovement);
     glutDisplayFunc(display);
     glutKeyboardFunc(keyPress);
     glutKeyboardUpFunc(keyRelease);
     glutTimerFunc(0, update, 0);
+    create_Entity(E1, 100, 100, 10, 10, 0);
+    create_Entity(E1, 150, 150, 10, 10, 0);
     glutMainLoop();
     return 0;
 }

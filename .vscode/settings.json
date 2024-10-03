@@ -6,6 +6,9 @@
         "player.h": "c",
         "global.h": "c",
         "gl.h": "c",
-        "map.h": "c"
+        "map.h": "c",
+        "array": "c",
+        "string": "c",
+        "string_view": "c"
     }
 }
