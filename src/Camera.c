@@ -3,8 +3,6 @@
 #include "Map.h"
 
 struct HitData CAM_Ray_Cast(double posX, double posY, double rayDirX, double rayDirY){
-    swap(posX, posY);
-    swap(rayDirX, rayDirY);
     struct HitData ret;
 
     ret.hit_block_x = (int)posX;
@@ -56,12 +54,12 @@ struct HitData CAM_Ray_Cast(double posX, double posY, double rayDirX, double ray
             ret.side = 0;
         }
 
-        if(map[ret.hit_block_x][ret.hit_block_y]) {
+        if(map[ret.hit_block_y][ret.hit_block_x]) {
             if(ret.side == 0)
                 ret.distance = (totalDistX-deltaDistX);
             else
                 ret.distance = (totalDistY-deltaDistY);
-            map[ret.hit_block_x][ret.hit_block_y] = min(((int)(ret.distance*10))+2, 255);
+            map[ret.hit_block_y][ret.hit_block_x] = min(((int)(ret.distance*10))+2, 255);
             break;
         }
     }
