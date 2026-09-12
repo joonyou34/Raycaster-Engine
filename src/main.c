@@ -10,6 +10,7 @@
 //PL_ : player-related functions
 //MP_ : map-related functions
 //CAM_ : camera-related functions
+//DEBUG_: debug feature
 #include "Global.h"
 #include "Player.h"
 #include "Map.h"
@@ -20,16 +21,32 @@ struct Player player1;
 struct Camera player1Cam;
 
 
+void specialKeyPress(int key, int mouseX, int mouseY) {
+    #ifdef DEBUG_FEATURES
+        switch(key) {
+            case GLUT_KEY_F1:
+                DEBUG_showHitboxs ^= 1;
+                break;
+            case GLUT_KEY_F2:
+                DEBUG_showRaycasterRays ^= 1;
+                break;
+            case GLUT_KEY_F3:
+                DEBUG_showTileDistance ^= 1;
+                break;
+        }
+    #endif
+}
+
+void specialKeyRelease(int key, int mouseX, int mouseY) {
+    //! DOES NOTHING RIGHT NOW
+}
+
 void keyPress(unsigned char key, int mouseX, int mouseY) {
     PL_Controls(&player1, key, 1);
 }
 
 void keyRelease(unsigned char key, int mouseX, int mouseY) {
     PL_Controls(&player1, key, 0);
-}
-
-void mousePress(int button, int state, int mouseX, int mouseY) {
-    return; //! DOES NOTHING RIGHT NOW
 }
 
 void redisplayWindow(int windowNum) {
@@ -44,8 +61,9 @@ void TD_display() {
 
     PL_render(&player1);
     MP_render();
-
-    PL_HitboxRender(&player1); //for debugging purposes
+    
+    if(DEBUG_showHitboxs)
+        PL_HitboxRender(&player1); //for debugging purposes
 
     // render raycaster rays
     for(int i = 0; i < stkPtr; i++) {
@@ -118,7 +136,8 @@ int main(int argc, char** argv) {
     init();
     glutKeyboardFunc(keyPress);
     glutKeyboardUpFunc(keyRelease);
-    glutMouseFunc(mousePress);
+    glutSpecialFunc(specialKeyPress);
+    glutSpecialUpFunc(specialKeyRelease);
     glutTimerFunc(0, update, 0);
     glutMainLoop();
     return 0;

@@ -34,6 +34,10 @@ extern float dt;
     extern float stkY1[BASE_WIDTH+10];
     extern float stkX2[BASE_WIDTH+10];
     extern float stkY2[BASE_WIDTH+10];
+
+    extern bool DEBUG_showHitboxs;
+    extern bool DEBUG_showRaycasterRays;
+    extern bool DEBUG_showTileDistance;
 #endif
 
 #define swap(a, b) {typeof(a) temp = a; a = b, b = temp;}

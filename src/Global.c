@@ -9,4 +9,8 @@ float dt = 0;
     float stkY1[BASE_WIDTH+10] = {};
     float stkX2[BASE_WIDTH+10] = {};
     float stkY2[BASE_WIDTH+10] = {};
+
+    bool DEBUG_showHitboxs = 0;
+    bool DEBUG_showRaycasterRays = 0;
+    bool DEBUG_showTileDistance = 0;
 #endif
