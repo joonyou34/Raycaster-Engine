@@ -1,0 +1,47 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "mingw_release",
+            "displayName": "Mingw Release",
+            "description": "",
+            "generator": "MinGW Makefiles",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "C:/Joonyou/Apps/mingw64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "C:/Joonyou/Apps/mingw64/bin/g++.exe",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "mingw_debug",
+            "displayName": "Mingw Debug",
+            "description": "",
+            "generator": "MinGW Makefiles",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_C_COMPILER": "C:/Joonyou/Apps/mingw64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "C:/Joonyou/Apps/mingw64/bin/g++.exe",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "ENABLE_DEBUG_FEATURES": "ON"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "mingw_release",
+            "description": "",
+            "displayName": "Mingw Release",
+            "configurePreset": "mingw_release"
+
+        },
+        {
+            "name": "mingw_debug",
+            "description": "",
+            "displayName": "Mingw Debug",
+            "configurePreset": "mingw_debug"
+        }
+    ]
+}

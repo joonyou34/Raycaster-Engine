@@ -12,75 +12,77 @@ void PL_Controls(struct Player* p, unsigned char key, bool pressed) {
         p->RIGHT_HOLD = pressed;
 }
 
-// the bob function (very important) (DONT DELETE)
-void PL_render(struct Player* p) {
-    
-    const int lineLen = 75;
-    glColor3ub(255, 0, 0); 
-    glBegin(GL_LINES);
-    glVertex2i(p->x, p->y);
-    glVertex2i(p->x + lineLen*cosf(p->thetaX), p->y + lineLen*sinf(p->thetaX));
-    glEnd();
+#ifdef DEBUG_FEATURES
+    // the bob function (very important) (DONT DELETE)
+    void PL_render(struct Player* p) {
+        
+        const int lineLen = 75;
+        glColor3ub(255, 0, 0); 
+        glBegin(GL_LINES);
+        glVertex2i(p->x, p->y);
+        glVertex2i(p->x + lineLen*cosf(p->thetaX), p->y + lineLen*sinf(p->thetaX));
+        glEnd();
 
-    glColor3ub(235, 180, 30);
-    glBegin(GL_TRIANGLES);
-    glVertex2i(p->x - 30*cosf(p->thetaX), p->y - 50*sinf(p->thetaX)); 
-    glVertex2i(p->x - 30*cosf(p->thetaX), p->y);     
-    glVertex2i(p->x-5*cosf(p->thetaX), p->y - 30*sinf(p->thetaX));
-
-
-    glVertex2i(p->x + 30*cosf(p->thetaX), p->y - 50*sinf(p->thetaX)); 
-    glVertex2i(p->x + 30*cosf(p->thetaX), p->y);      
-    glVertex2i(p->x+5*cosf(p->thetaX), p->y - 30*sinf(p->thetaX));
-    glEnd();
+        glColor3ub(235, 180, 30);
+        glBegin(GL_TRIANGLES);
+        glVertex2i(p->x - 30*cosf(p->thetaX), p->y - 50*sinf(p->thetaX)); 
+        glVertex2i(p->x - 30*cosf(p->thetaX), p->y);     
+        glVertex2i(p->x-5*cosf(p->thetaX), p->y - 30*sinf(p->thetaX));
 
 
-    glColor3ub(255, 200, 50);
-    drawCircle(p->x, p->y, 20, 20);
-    glEnd();
+        glVertex2i(p->x + 30*cosf(p->thetaX), p->y - 50*sinf(p->thetaX)); 
+        glVertex2i(p->x + 30*cosf(p->thetaX), p->y);      
+        glVertex2i(p->x+5*cosf(p->thetaX), p->y - 30*sinf(p->thetaX));
+        glEnd();
 
-    glColor3ub(0, 0, 0); 
-    glPointSize(3);
-    glBegin(GL_POINTS);
-    glVertex2i(p->x-10*cosf(p->thetaX), p->y-15*sinf(p->thetaX));
-    glVertex2i(p->x+10*cosf(p->thetaX), p->y-15*sinf(p->thetaX));
-    glEnd();
 
-    glColor3ub(127, 0, 25); 
-    glBegin(GL_TRIANGLES);
-    glVertex2i(p->x - 7*cosf(p->thetaX), p->y + 5*sinf(p->thetaX)); 
-    glVertex2i(p->x + 7*cosf(p->thetaX), p->y + 5*sinf(p->thetaX));     
-    glVertex2i(p->x , p->y + 20*sinf(p->thetaX));  
-    glEnd();
-}
+        glColor3ub(255, 200, 50);
+        drawCircle(p->x, p->y, 20, 20);
+        glEnd();
 
-void PL_HitboxRender(struct Player* p) {
-    float halfW = p->width * 0.5f, halfH = p->height * 0.5f;
+        glColor3ub(0, 0, 0); 
+        glPointSize(3);
+        glBegin(GL_POINTS);
+        glVertex2i(p->x-10*cosf(p->thetaX), p->y-15*sinf(p->thetaX));
+        glVertex2i(p->x+10*cosf(p->thetaX), p->y-15*sinf(p->thetaX));
+        glEnd();
 
-    glColor4ub(255, 0, 0, 127);
-    glBegin(GL_QUADS);
-    glVertex2f(p->x - halfW, p->y - halfH); // top left
-    glVertex2f(p->x + halfW, p->y - halfH); // top right
-    glVertex2f(p->x + halfW, p->y + halfH); // bottom right
-    glVertex2f(p->x - halfW, p->y + halfH); // bottom left
-    glEnd();
+        glColor3ub(127, 0, 25); 
+        glBegin(GL_TRIANGLES);
+        glVertex2i(p->x - 7*cosf(p->thetaX), p->y + 5*sinf(p->thetaX)); 
+        glVertex2i(p->x + 7*cosf(p->thetaX), p->y + 5*sinf(p->thetaX));     
+        glVertex2i(p->x , p->y + 20*sinf(p->thetaX));  
+        glEnd();
+    }
 
-    //white dots for tile checks
-    int cellXi = (((p->x - halfW)/BASE_WIDTH)*(MAP_X)),
-        cellXf = (((p->x + halfW)/BASE_WIDTH)*(MAP_X)),
-        cellYi = (((p->y - halfH)/BASE_HEIGHT)*(MAP_Y)),
-        cellYf = (((p->y + halfH)/BASE_HEIGHT)*(MAP_Y));
-    cellXi = max(cellXi, 0), cellYi = max(cellYi, 0);
-    cellXf = min(cellXf, MAP_X-1), cellYf = min(cellYf, MAP_Y-1);
-    glColor3ub(255, 255, 255); 
-    glPointSize(3);
-    glBegin(GL_POINTS);
-    glVertex2i(cellXi*squareWidth + squareWidth/2, cellYi*squareWidth + squareWidth/2);
-    glVertex2i(cellXf*squareWidth + squareWidth/2, cellYi*squareWidth + squareWidth/2);
-    glVertex2i(cellXi*squareWidth + squareWidth/2, cellYf*squareWidth + squareWidth/2);
-    glVertex2i(cellXf*squareWidth + squareWidth/2, cellYf*squareWidth + squareWidth/2);
-    glEnd();
-}
+    void PL_HitboxRender(struct Player* p) {
+        float halfW = p->width * 0.5f, halfH = p->height * 0.5f;
+
+        glColor4ub(255, 0, 0, 127);
+        glBegin(GL_QUADS);
+        glVertex2f(p->x - halfW, p->y - halfH); // top left
+        glVertex2f(p->x + halfW, p->y - halfH); // top right
+        glVertex2f(p->x + halfW, p->y + halfH); // bottom right
+        glVertex2f(p->x - halfW, p->y + halfH); // bottom left
+        glEnd();
+
+        //white dots for tile checks
+        int cellXi = (((p->x - halfW)/BASE_WIDTH)*(MAP_X)),
+            cellXf = (((p->x + halfW)/BASE_WIDTH)*(MAP_X)),
+            cellYi = (((p->y - halfH)/BASE_HEIGHT)*(MAP_Y)),
+            cellYf = (((p->y + halfH)/BASE_HEIGHT)*(MAP_Y));
+        cellXi = max(cellXi, 0), cellYi = max(cellYi, 0);
+        cellXf = min(cellXf, MAP_X-1), cellYf = min(cellYf, MAP_Y-1);
+        glColor3ub(255, 255, 255); 
+        glPointSize(3);
+        glBegin(GL_POINTS);
+        glVertex2i(cellXi*squareWidth + squareWidth/2, cellYi*squareWidth + squareWidth/2);
+        glVertex2i(cellXf*squareWidth + squareWidth/2, cellYi*squareWidth + squareWidth/2);
+        glVertex2i(cellXi*squareWidth + squareWidth/2, cellYf*squareWidth + squareWidth/2);
+        glVertex2i(cellXf*squareWidth + squareWidth/2, cellYf*squareWidth + squareWidth/2);
+        glEnd();
+    }
+#endif
 
 // initializes all important player variables
 void PL_Init(struct Player* p) {

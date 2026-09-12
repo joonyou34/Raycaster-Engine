@@ -17,10 +17,13 @@ struct Player {
 };
 
 void PL_Controls(struct Player* p, unsigned char key, bool pressed);
-void PL_render(struct Player* p);
-void PL_HitboxRender(struct Player* p);
 void PL_Init(struct Player* p);
 bool PL_WallCollision(struct Player* p);
 void PL_Move(struct Player* p, struct Camera* cam);
+
+#ifdef DEBUG_FEATURES
+    void PL_render(struct Player* p);
+    void PL_HitboxRender(struct Player* p);
+#endif
 
 #endif

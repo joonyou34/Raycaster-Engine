@@ -20,12 +20,16 @@ struct Player player1;
 struct Camera player1Cam;
 
 
-void keyPress(unsigned char key, int x, int y) {
+void keyPress(unsigned char key, int mouseX, int mouseY) {
     PL_Controls(&player1, key, 1);
 }
 
-void keyRelease(unsigned char key, int x, int y) {
+void keyRelease(unsigned char key, int mouseX, int mouseY) {
     PL_Controls(&player1, key, 0);
+}
+
+void mousePress(int button, int state, int mouseX, int mouseY) {
+    return; //! DOES NOTHING RIGHT NOW
 }
 
 void redisplayWindow(int windowNum) {
@@ -33,14 +37,17 @@ void redisplayWindow(int windowNum) {
     glutPostRedisplay();
 }
 
+#ifdef DEBUG_FEATURES
 //top-down display
 void TD_display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     PL_render(&player1);
     MP_render();
+
     PL_HitboxRender(&player1); //for debugging purposes
 
+    // render raycaster rays
     for(int i = 0; i < stkPtr; i++) {
         glColor3ub(255, 0, 0);
         glBegin(GL_LINES);
@@ -48,10 +55,11 @@ void TD_display() {
         glVertex2f(stkX2[i], stkY2[i]);
         glEnd();
     }
-    stkPtr = 0;
 
     glutSwapBuffers();
 }
+#endif
+
 
 //raycaster display
 void RC_display() {
@@ -78,7 +86,13 @@ void init() {
     PL_Init(&player1);
     CAM_init(&player1Cam);
     CAM_followPlayer(&player1Cam, &player1);
-    glutSetWindow(2);
+
+    #ifdef DEBUG_FEATURES
+        glutSetWindow(2);
+    #else
+        glutSetWindow(1);
+    #endif
+        
 }
 
 
@@ -87,19 +101,24 @@ void update(int value) {
     PL_Move(&player1, &player1Cam);
     
     redisplayWindow(1);
-    redisplayWindow(2);
+    #ifdef DEBUG_FEATURES
+        redisplayWindow(2);
+    #endif
     glutTimerFunc(mSPF, update, 0);
 }
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
 
-    initWindow(BASE_WIDTH, BASE_HEIGHT, "top-down smiling Bob", TD_display);
+    #ifdef DEBUG_FEATURES
+        initWindow(BASE_WIDTH, BASE_HEIGHT, "top-down smiling Bob", TD_display);
+    #endif
     initWindow(BASE_WIDTH, BASE_HEIGHT, "raycasting Bob", RC_display);
 
     init();
     glutKeyboardFunc(keyPress);
     glutKeyboardUpFunc(keyRelease);
+    glutMouseFunc(mousePress);
     glutTimerFunc(0, update, 0);
     glutMainLoop();
     return 0;

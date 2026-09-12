@@ -59,7 +59,12 @@ struct HitData CAM_Ray_Cast(double posX, double posY, double rayDirX, double ray
                 ret.distance = (totalDistX-deltaDistX);
             else
                 ret.distance = (totalDistY-deltaDistY);
-            map[ret.hit_block_y][ret.hit_block_x] = min(((int)(ret.distance*10))+2, 255);
+
+            #ifdef DEBUG_FEATURES
+                // setting tile value based on distance
+                map[ret.hit_block_y][ret.hit_block_x] = min(((int)(ret.distance*10))+2, 255);
+            #endif
+
             break;
         }
     }
@@ -73,11 +78,18 @@ struct HitData CAM_Ray_Cast(double posX, double posY, double rayDirX, double ray
 }
 
 void CAM_Render(struct Camera* cam){
-    for(int i = 0; i < MAP_X; i++) {
-        for(int j = 0; j < MAP_Y; j++)
-            if(map[j][i])
-                map[j][i] = 1;
-    }
+    #ifdef DEBUG_FEATURES
+        // resets the map tiles to 1 (assuming tile values were modified to distance)
+        for(int i = 0; i < MAP_X; i++) {
+            for(int j = 0; j < MAP_Y; j++)
+                if(map[j][i])
+                    map[j][i] = 1;
+        }
+    #endif
+
+    #ifdef DEBUG_FEATURES
+        stkPtr = 0;
+    #endif
     for(int ray = 0; ray < BASE_WIDTH; ray++) {
         double camX = 2*ray/(double)BASE_WIDTH -1;
         double rayDirX = cam->dirX + cam->planeX * camX;
@@ -89,15 +101,19 @@ void CAM_Render(struct Camera* cam){
         int drawStart = ((BASE_HEIGHT - lineHeight)>>1);
         int drawEnd = ((BASE_HEIGHT + lineHeight)>>1);
 
-        stkX1[stkPtr] = cam->posX;
-        stkY1[stkPtr] = cam->posY;
-        double dv = sqrt(rayDirX*rayDirX + rayDirY*rayDirY);
-        double dx = rayDirX, dy = rayDirY;
-        dx *= hitdata.distance*squareHeight, dy *= hitdata.distance*squareHeight;
-        dx += cam->posX, dy += cam->posY;
-        stkX2[stkPtr] = dx;
-        stkY2[stkPtr] = dy;
-        stkPtr++;
+        #ifdef DEBUG_FEATURES
+        { // debugging raycasting rays
+            stkX1[stkPtr] = cam->posX;
+            stkY1[stkPtr] = cam->posY;
+            double dv = sqrt(rayDirX*rayDirX + rayDirY*rayDirY);
+            double dx = rayDirX, dy = rayDirY;
+            dx *= hitdata.distance*squareHeight, dy *= hitdata.distance*squareHeight;
+            dx += cam->posX, dy += cam->posY;
+            stkX2[stkPtr] = dx;
+            stkY2[stkPtr] = dy;
+            stkPtr++;
+        }
+        #endif
 
         glColor3ub(0, 0, (127<<hitdata.side));
         glBegin(GL_LINES);
