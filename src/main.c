@@ -7,9 +7,10 @@
 */
 
 //list of prefixes:
-//PL_ : player-related functions
-//MP_ : map-related functions
-//CAM_ : camera-related functions
+//PL_   : player-related functions
+//MP_   : map-related functions
+//CAM_  : camera-related functions
+//RN_   : renderer-related functions
 //DEBUG_: debug feature
 #include "Global.h"
 #include "Player.h"
