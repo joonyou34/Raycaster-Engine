@@ -11,20 +11,19 @@ struct RenderData RN_lineToData(float x1, float y1,
     ret.dataType = RN_LINE;
     ret.distance = distance;
 
-    ret.data = malloc(sizeof(float)*4 + sizeof(byte)*4);
+    ret.data = malloc(sizeof(struct LineData));
+    struct LineData* data = ret.data;
 
+    data->x1 = x1;
+    data->y1 = y1;
+    data->x2 = x2;
+    data->y2 = y2;
 
-    *((float*)ret.data)     = x1;
-    *((float*)ret.data + 1) = y1;
-    *((float*)ret.data + 2) = x2;
-    *((float*)ret.data + 3) = y2;
-
-    *((byte*)((float*)ret.data + 4))     = R;
-    *((byte*)((float*)ret.data + 4) + 1) = G;
-    *((byte*)((float*)ret.data + 4) + 2) = B;
-    *((byte*)((float*)ret.data + 4) + 3) = A;
-
-
+    data->R = R;
+    data->G = G;
+    data->B = B;
+    data->A = A;
+    
     return ret;
 }
 
@@ -36,14 +35,15 @@ struct RenderData RN_textureToData(GLuint textureId,
     ret.dataType = RN_TEXTURE;
     ret.distance = distance;
 
-    ret.data = malloc(sizeof(float)*4 + sizeof(GLuint));
+    ret.data = malloc(sizeof(struct TextureData));
+    struct TextureData* data = ret.data;
 
-    *((GLuint*)ret.data) = textureId;
+    data->textureId = textureId;
     
-    *((float*)((GLuint*)ret.data + 1))     = x;
-    *((float*)((GLuint*)ret.data + 1) + 1) = y;
-    *((float*)((GLuint*)ret.data + 1) + 2) = width;
-    *((float*)((GLuint*)ret.data + 1) + 3) = height;
+    data->x = x;
+    data->y = y;
+    data->width = width;
+    data->height = height;
 
     return ret;
 }
@@ -68,5 +68,5 @@ int RN_comp(const void* a, const void* b) {
 void RN_render() {
     //! consider using a different sorting algorithm since this one is weird
     qsort(RN_buffer, RN_bufferSize, sizeof(struct RenderData), RN_comp);
-    //TODO iterate over the buffer and render everything
+    //TODO iterate over the buffer to render and delete every element then reset the buffer size to 0
 }

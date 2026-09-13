@@ -12,6 +12,19 @@ struct RenderData {
     byte dataType;
 };
 
+struct LineData {
+    float x1, y1;
+    float x2, y2;
+    byte R, G, B, A;
+};
+
+struct TextureData {
+    GLuint textureId;
+    float x, y;
+    float width, height;
+    float distance;
+};
+
 struct RenderData RN_lineToData(float x1, float y1,
                                 float x2, float y2,
                                 byte R, byte G, byte B, byte A,
