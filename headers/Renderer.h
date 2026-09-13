@@ -22,7 +22,6 @@ struct TextureData {
     GLuint textureId;
     float x, y;
     float width, height;
-    float distance;
 };
 
 struct RenderData RN_lineToData(float x1, float y1,
