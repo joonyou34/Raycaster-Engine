@@ -7,17 +7,24 @@
 #define RN_TEXTURE 0
 #define RN_LINE 1
 struct RenderData {
-    byte dataType;
     void* data;
+    float distance;
+    byte dataType;
 };
 
-// struct RenderData RN_
+struct RenderData RN_lineToData(float x1, float y1,
+                                float x2, float y2,
+                                byte R, byte G, byte B, byte A,
+                                float distance);
 
-struct RenderData RN_Buffer[RN_BUFFER_CAPACITY];
-int RN_bufferSize;
+struct RenderData RN_textureToData(GLuint textureId,
+                                float x, float y,
+                                float width, float height,
+                                float distance);
 
-void RN_render() {
+void RN_delete(struct RenderData* a);
+void RN_append(struct RenderData data);
+void RN_render();
 
-}
 
 #endif
