@@ -2,17 +2,17 @@
 #include "System.h"
 #include "Map.h"
 
-struct HitData CAM_Ray_Cast(double posX, double posY, double rayDirX, double rayDirY){
+struct HitData CAM_Ray_Cast(float posX, float posY, float rayDirX, float rayDirY){
     struct HitData ret;
 
     ret.hit_block_x = (int)posX;
     ret.hit_block_y = (int)posY;
 
-    double totalDistX;
-    double totalDistY;
+    float totalDistX;
+    float totalDistY;
 
-    double deltaDistX = fabs(1/rayDirX);
-    double deltaDistY = fabs(1/rayDirY);
+    float deltaDistX = fabs(1/rayDirX);
+    float deltaDistY = fabs(1/rayDirY);
 
     int stepX;
     int stepY;
@@ -96,9 +96,9 @@ void CAM_Render(struct Camera* cam){
     #endif
 
     for(int ray = 0; ray < BASE_WIDTH; ray++) {
-        double camX = 2*ray/(double)BASE_WIDTH -1;
-        double rayDirX = cam->dirX + cam->planeX * camX;
-        double rayDirY = cam->dirY + cam->planeY * camX;
+        float camX = 2*ray/(float)BASE_WIDTH -1;
+        float rayDirX = cam->dirX + cam->planeX * camX;
+        float rayDirY = cam->dirY + cam->planeY * camX;
 
         struct HitData hitdata = CAM_Ray_Cast(cam->posX/squareWidth, cam->posY/squareHeight, rayDirX, rayDirY);
 
@@ -110,8 +110,8 @@ void CAM_Render(struct Camera* cam){
             if(DEBUG_showRaycasterRays) { // debugging raycasting rays
                 stkX1[stkPtr] = cam->posX;
                 stkY1[stkPtr] = cam->posY;
-                double dv = sqrt(rayDirX*rayDirX + rayDirY*rayDirY);
-                double dx = rayDirX, dy = rayDirY;
+                float dv = sqrt(rayDirX*rayDirX + rayDirY*rayDirY);
+                float dx = rayDirX, dy = rayDirY;
                 dx *= hitdata.distance*squareHeight, dy *= hitdata.distance*squareHeight;
                 dx += cam->posX, dy += cam->posY;
                 stkX2[stkPtr] = dx;
@@ -124,16 +124,16 @@ void CAM_Render(struct Camera* cam){
 
         glColor3ub(0, 0, (127<<hitdata.side));
         glBegin(GL_LINES);
-        glVertex2d(ray, drawStart);
-        glVertex2d(ray, drawEnd);
+        glVertex2f(ray, drawStart);
+        glVertex2f(ray, drawEnd);
         glEnd();
     }
 }
 
-void CAM_setDirection(struct Camera* cam, double theta) {
+void CAM_setDirection(struct Camera* cam, float theta) {
     cam->dirX = cos(theta);
     cam->dirY = sin(theta);
-    double planeSize = tan(cam->FOV/2.0); //FOV = 2*atan(planeSize), planeSize = tan(FOV/2)
+    float planeSize = tan(cam->FOV/2.0); //FOV = 2*atan(planeSize), planeSize = tan(FOV/2)
     cam->planeX = -cam->dirY * planeSize; 
     cam->planeY = cam->dirX * planeSize;
 }

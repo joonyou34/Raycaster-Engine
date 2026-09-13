@@ -19,20 +19,20 @@ void PL_Controls(struct Player* p, unsigned char key, bool pressed) {
         const int lineLen = 75;
         glColor3ub(255, 0, 0); 
         glBegin(GL_LINES);
-        glVertex2i(p->x, p->y);
-        glVertex2i(p->x + lineLen*cosf(p->thetaX), p->y + lineLen*sinf(p->thetaX));
+        glVertex2f(p->x, p->y);
+        glVertex2f(p->x + lineLen*cosf(p->thetaX), p->y + lineLen*sinf(p->thetaX));
         glEnd();
 
         glColor3ub(235, 180, 30);
         glBegin(GL_TRIANGLES);
-        glVertex2i(p->x - 30*cosf(p->thetaX), p->y - 50*sinf(p->thetaX)); 
-        glVertex2i(p->x - 30*cosf(p->thetaX), p->y);     
-        glVertex2i(p->x-5*cosf(p->thetaX), p->y - 30*sinf(p->thetaX));
+        glVertex2f(p->x - 30*cosf(p->thetaX), p->y - 50*sinf(p->thetaX)); 
+        glVertex2f(p->x - 30*cosf(p->thetaX), p->y);     
+        glVertex2f(p->x-5*cosf(p->thetaX), p->y - 30*sinf(p->thetaX));
 
 
-        glVertex2i(p->x + 30*cosf(p->thetaX), p->y - 50*sinf(p->thetaX)); 
-        glVertex2i(p->x + 30*cosf(p->thetaX), p->y);      
-        glVertex2i(p->x+5*cosf(p->thetaX), p->y - 30*sinf(p->thetaX));
+        glVertex2f(p->x + 30*cosf(p->thetaX), p->y - 50*sinf(p->thetaX)); 
+        glVertex2f(p->x + 30*cosf(p->thetaX), p->y);      
+        glVertex2f(p->x+5*cosf(p->thetaX), p->y - 30*sinf(p->thetaX));
         glEnd();
 
 
@@ -43,15 +43,15 @@ void PL_Controls(struct Player* p, unsigned char key, bool pressed) {
         glColor3ub(0, 0, 0); 
         glPointSize(3);
         glBegin(GL_POINTS);
-        glVertex2i(p->x-10*cosf(p->thetaX), p->y-15*sinf(p->thetaX));
-        glVertex2i(p->x+10*cosf(p->thetaX), p->y-15*sinf(p->thetaX));
+        glVertex2f(p->x-10*cosf(p->thetaX), p->y-15*sinf(p->thetaX));
+        glVertex2f(p->x+10*cosf(p->thetaX), p->y-15*sinf(p->thetaX));
         glEnd();
 
         glColor3ub(127, 0, 25); 
         glBegin(GL_TRIANGLES);
-        glVertex2i(p->x - 7*cosf(p->thetaX), p->y + 5*sinf(p->thetaX)); 
-        glVertex2i(p->x + 7*cosf(p->thetaX), p->y + 5*sinf(p->thetaX));     
-        glVertex2i(p->x , p->y + 20*sinf(p->thetaX));  
+        glVertex2f(p->x - 7*cosf(p->thetaX), p->y + 5*sinf(p->thetaX)); 
+        glVertex2f(p->x + 7*cosf(p->thetaX), p->y + 5*sinf(p->thetaX));     
+        glVertex2f(p->x , p->y + 20*sinf(p->thetaX));  
         glEnd();
     }
 
@@ -76,10 +76,10 @@ void PL_Controls(struct Player* p, unsigned char key, bool pressed) {
         glColor3ub(255, 255, 255); 
         glPointSize(3);
         glBegin(GL_POINTS);
-        glVertex2i(cellXi*squareWidth + squareWidth/2, cellYi*squareWidth + squareWidth/2);
-        glVertex2i(cellXf*squareWidth + squareWidth/2, cellYi*squareWidth + squareWidth/2);
-        glVertex2i(cellXi*squareWidth + squareWidth/2, cellYf*squareWidth + squareWidth/2);
-        glVertex2i(cellXf*squareWidth + squareWidth/2, cellYf*squareWidth + squareWidth/2);
+        glVertex2f(cellXi*squareWidth + squareWidth/2, cellYi*squareWidth + squareWidth/2);
+        glVertex2f(cellXf*squareWidth + squareWidth/2, cellYi*squareWidth + squareWidth/2);
+        glVertex2f(cellXi*squareWidth + squareWidth/2, cellYf*squareWidth + squareWidth/2);
+        glVertex2f(cellXf*squareWidth + squareWidth/2, cellYf*squareWidth + squareWidth/2);
         glEnd();
     }
 #endif
