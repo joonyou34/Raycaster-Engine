@@ -70,6 +70,9 @@ int RN_comp(const void* a, const void* b) {
 
 void RN_render() {
     //! consider using a different sorting algorithm since this one is weird
+
+    //TODO add ceiling and floor renderers outside of the main render logic
+
     qsort(RN_buffer, RN_bufferSize, sizeof(struct RenderData), RN_comp);
     for(int i = 0; i < RN_bufferSize; i++) {
         switch(RN_buffer[i].dataType) {
