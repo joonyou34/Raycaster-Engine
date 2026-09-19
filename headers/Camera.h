@@ -11,6 +11,10 @@ struct Camera {
     float FOV;
     float dirX, dirY; 
     float planeX, planeY;
+
+    float screenTopLeftX, screenTopLeftY; // from 0.0 to 1.0
+    float screenSize; // from 0.0 to 1.0 --> the percentage of the screen filled
+    int baseWidth, baseHeight; // the selected resoluton (before scaling up to screen)
 };
 
 struct HitData{ // *not hitman related*

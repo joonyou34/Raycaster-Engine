@@ -5,6 +5,7 @@ int RN_bufferSize;
 
 struct RenderData RN_lineToData(float x1, float y1,
                                 float x2, float y2,
+                                float width,
                                 byte R, byte G, byte B, byte A,
                                 float distance) {
     struct RenderData ret;
@@ -18,6 +19,8 @@ struct RenderData RN_lineToData(float x1, float y1,
     data->y1 = y1;
     data->x2 = x2;
     data->y2 = y2;
+
+    data->width = width;
 
     data->R = R;
     data->G = G;
@@ -78,7 +81,9 @@ void RN_render() {
             case RN_LINE: {
                 struct LineData* data = RN_buffer[i].data;
 
+                glLineWidth(data->width);
                 glColor4ub(data->R, data->G, data->B, data->A);
+                //! consider optimizng this so you don't call glBegin and glEnd for every single object/line
                 glBegin(GL_LINES);
                 glVertex2f(data->x1, data->y1);
                 glVertex2f(data->x2, data->y2);

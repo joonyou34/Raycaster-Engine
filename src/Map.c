@@ -1,7 +1,7 @@
 #include "Map.h"
 
-float squareWidth = BASE_WIDTH / MAP_X; 
-float squareHeight = BASE_HEIGHT / MAP_Y;
+float squareWidth = DEFAULT_BASE_WIDTH / MAP_X; 
+float squareHeight = DEFAULT_BASE_HEIGHT / MAP_Y;
 
 unsigned char map[MAP_Y][MAP_X] = {
     {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},

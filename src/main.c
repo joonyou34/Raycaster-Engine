@@ -50,6 +50,20 @@ void keyRelease(unsigned char key, int mouseX, int mouseY) {
     PL_Controls(&player1, key, 0);
 }
 
+void reshapeWindow(int width, int height) {
+    screenWidth = width;
+    screenHeight = height;
+
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    gluOrtho2D(0, width, height, 0);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
 void redisplayWindow(int windowNum) {
     glutSetWindow(windowNum);
     glutPostRedisplay();
@@ -97,7 +111,7 @@ void initWindow(int width, int height, const char* name, void (*displayFunction)
     glutDisplayFunc(displayFunction);
 
     glClearColor(0, 0, 0, 0);
-    gluOrtho2D(0, BASE_WIDTH, BASE_HEIGHT, 0);
+    gluOrtho2D(0, width, height, 0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
@@ -112,7 +126,8 @@ void init() {
     #else
         glutSetWindow(1);
     #endif
-        
+    
+    
 }
 
 
@@ -131,15 +146,19 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
 
     #ifdef DEBUG_FEATURES
-        initWindow(BASE_WIDTH, BASE_HEIGHT, "top-down smiling Bob", TD_display);
+        initWindow(DEFAULT_BASE_WIDTH, DEFAULT_BASE_HEIGHT, "top-down smiling Bob", TD_display);
     #endif
-    initWindow(BASE_WIDTH, BASE_HEIGHT, "raycasting Bob", RC_display);
+    initWindow(screenWidth, screenHeight, "raycasting Bob", RC_display);
 
     init();
+
     glutKeyboardFunc(keyPress);
     glutKeyboardUpFunc(keyRelease);
     glutSpecialFunc(specialKeyPress);
     glutSpecialUpFunc(specialKeyRelease);
+
+    glutReshapeFunc(reshapeWindow);
+
     glutTimerFunc(0, update, 0);
     glutMainLoop();
     return 0;

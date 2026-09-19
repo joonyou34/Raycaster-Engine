@@ -8,9 +8,9 @@
 #include <math.h>
 
 //absolute width
-#define BASE_WIDTH 800
+#define DEFAULT_BASE_WIDTH 800
 //absolute height
-#define BASE_HEIGHT 600
+#define DEFAULT_BASE_HEIGHT 600
 
 #define PI       3.1415926f
 #define TWO_PI   6.2831852f
@@ -31,12 +31,14 @@ extern unsigned int dtMs;
 //deltaTime in seconds
 extern float dt;
 
+extern int screenWidth, screenHeight;
+
 #ifdef DEBUG_FEATURES
     extern int stkPtr;
-    extern float stkX1[BASE_WIDTH+10];
-    extern float stkY1[BASE_WIDTH+10];
-    extern float stkX2[BASE_WIDTH+10];
-    extern float stkY2[BASE_WIDTH+10];
+    extern float stkX1[DEFAULT_BASE_WIDTH+10];
+    extern float stkY1[DEFAULT_BASE_WIDTH+10];
+    extern float stkX2[DEFAULT_BASE_WIDTH+10];
+    extern float stkY2[DEFAULT_BASE_WIDTH+10];
 
     extern bool DEBUG_showHitboxs;
     extern bool DEBUG_showRaycasterRays;

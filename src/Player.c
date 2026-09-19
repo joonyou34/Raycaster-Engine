@@ -67,10 +67,10 @@ void PL_Controls(struct Player* p, unsigned char key, bool pressed) {
         glEnd();
 
         //white dots for tile checks
-        int cellXi = (((p->x - halfW)/BASE_WIDTH)*(MAP_X)),
-            cellXf = (((p->x + halfW)/BASE_WIDTH)*(MAP_X)),
-            cellYi = (((p->y - halfH)/BASE_HEIGHT)*(MAP_Y)),
-            cellYf = (((p->y + halfH)/BASE_HEIGHT)*(MAP_Y));
+        int cellXi = (((p->x - halfW)/DEFAULT_BASE_WIDTH)*(MAP_X)),
+            cellXf = (((p->x + halfW)/DEFAULT_BASE_WIDTH)*(MAP_X)),
+            cellYi = (((p->y - halfH)/DEFAULT_BASE_HEIGHT)*(MAP_Y)),
+            cellYf = (((p->y + halfH)/DEFAULT_BASE_HEIGHT)*(MAP_Y));
         cellXi = max(cellXi, 0), cellYi = max(cellYi, 0);
         cellXf = min(cellXf, MAP_X-1), cellYf = min(cellYf, MAP_Y-1);
         glColor3ub(255, 255, 255); 
@@ -86,8 +86,8 @@ void PL_Controls(struct Player* p, unsigned char key, bool pressed) {
 
 // initializes all important player variables
 void PL_Init(struct Player* p) {
-    p->x = BASE_WIDTH/2.f;
-    p->y = BASE_HEIGHT/2.f;
+    p->x = DEFAULT_BASE_WIDTH/2.f;
+    p->y = DEFAULT_BASE_HEIGHT/2.f;
     p->v = 200.f;
     p->sensitivityX = 2.f;
     p->thetaX = 0.f;
@@ -106,10 +106,10 @@ void PL_Init(struct Player* p) {
 //can be optimized to iterate over the outline of the square only (if hitbox will be greater than a single grid)
 bool PL_WallCollision(struct Player* p) {
     float halfW = p->width * 0.5f, halfH = p->height * 0.5f;
-    int cellXi = (((p->x - halfW)/BASE_WIDTH)*(MAP_X)),
-        cellXf = (((p->x + halfW)/BASE_WIDTH)*(MAP_X)),
-        cellYi = (((p->y - halfH)/BASE_HEIGHT)*(MAP_Y)),
-        cellYf = (((p->y + halfH)/BASE_HEIGHT)*(MAP_Y));
+    int cellXi = (((p->x - halfW)/DEFAULT_BASE_WIDTH)*(MAP_X)),
+        cellXf = (((p->x + halfW)/DEFAULT_BASE_WIDTH)*(MAP_X)),
+        cellYi = (((p->y - halfH)/DEFAULT_BASE_HEIGHT)*(MAP_Y)),
+        cellYf = (((p->y + halfH)/DEFAULT_BASE_HEIGHT)*(MAP_Y));
     cellXi = max(cellXi, 0), cellYi = max(cellYi, 0);
     cellXf = min(cellXf, MAP_X-1), cellYf = min(cellYf, MAP_Y-1);
     for(int x = cellXi; x <= cellXf; x++) {

@@ -15,6 +15,7 @@ struct RenderData {
 struct LineData {
     float x1, y1;
     float x2, y2;
+    float width;
     byte R, G, B, A;
 };
 
@@ -26,6 +27,7 @@ struct TextureData {
 
 struct RenderData RN_lineToData(float x1, float y1,
                                 float x2, float y2,
+                                float width,
                                 byte R, byte G, byte B, byte A,
                                 float distance);
 
