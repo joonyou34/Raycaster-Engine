@@ -84,8 +84,9 @@ void TD_display() {
 void RC_display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    CAM_Render(&player1Cam);
+    CAM_draw(&player1Cam);
 
+    RN_render();
     glutSwapBuffers();
 }
 

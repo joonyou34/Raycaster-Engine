@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "System.h"
 #include "Map.h"
+#include "Renderer.h"
 
 struct HitData CAM_Ray_Cast(float posX, float posY, float rayDirX, float rayDirY){
     struct HitData ret;
@@ -78,7 +79,7 @@ struct HitData CAM_Ray_Cast(float posX, float posY, float rayDirX, float rayDirY
     return ret;
 }
 
-void CAM_Render(struct Camera* cam){
+void CAM_draw(struct Camera* cam){
     #ifdef DEBUG_FEATURES
         static bool needCleanup = 0;
         if(needCleanup || DEBUG_showTileDistance) {
@@ -122,11 +123,7 @@ void CAM_Render(struct Camera* cam){
             needCleanup = DEBUG_showTileDistance;
         #endif
 
-        glColor3ub(0, 0, (127<<hitdata.side));
-        glBegin(GL_LINES);
-        glVertex2f(ray, drawStart);
-        glVertex2f(ray, drawEnd);
-        glEnd();
+        RN_append(RN_lineToData(ray, drawStart, ray, drawEnd, 0, 0, (127 << hitdata.side), 255, hitdata.distance));
     }
 }
 

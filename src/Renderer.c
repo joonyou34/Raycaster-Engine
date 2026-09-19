@@ -68,5 +68,31 @@ int RN_comp(const void* a, const void* b) {
 void RN_render() {
     //! consider using a different sorting algorithm since this one is weird
     qsort(RN_buffer, RN_bufferSize, sizeof(struct RenderData), RN_comp);
-    //TODO iterate over the buffer to render and delete every element then reset the buffer size to 0
+    for(int i = 0; i < RN_bufferSize; i++) {
+        switch(RN_buffer[i].dataType) {
+            case RN_TEXTURE:
+                struct TextureData* data = RN_buffer[i].data;
+                //TODO render the texture
+                break;
+
+            case RN_LINE: {
+                struct LineData* data = RN_buffer[i].data;
+
+                glColor4ub(data->R, data->G, data->B, data->A);
+                glBegin(GL_LINES);
+                glVertex2f(data->x1, data->y1);
+                glVertex2f(data->x2, data->y2);
+                glEnd();
+                break;
+            }
+
+            default:
+                fprintf(stderr, "wrong or unimplemented render object type");
+                exit(1);
+        }
+
+        RN_delete(&RN_buffer[i]);
+    }
+    
+    RN_bufferSize = 0;
 }
