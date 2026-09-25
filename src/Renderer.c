@@ -1,63 +1,65 @@
 #include "Renderer.h"
 
+struct LineData RN_lineBuffer[RN_LINE_CAPACITY];
+int RN_lineCount;
+
+struct TextureData RN_textureBuffer[RN_TEXTURE_CAPACITY];
+int RN_textureCount;
+
 struct RenderData RN_buffer[RN_BUFFER_CAPACITY];
 int RN_bufferSize;
 
-struct RenderData RN_lineToData(float x1, float y1,
+void RN_AppendLine(float x1, float y1,
                                 float x2, float y2,
                                 float width,
                                 byte R, byte G, byte B, byte A,
                                 float distance) {
-    struct RenderData ret;
-    ret.dataType = RN_LINE;
-    ret.distance = distance;
 
-    ret.data = malloc(sizeof(struct LineData));
-    struct LineData* data = ret.data;
+    struct LineData* line = &RN_lineBuffer[RN_lineCount];
 
-    data->x1 = x1;
-    data->y1 = y1;
-    data->x2 = x2;
-    data->y2 = y2;
+    line->x1 = x1;
+    line->y1 = y1;
+    line->x2 = x2;
+    line->y2 = y2;
 
-    data->width = width;
+    line->width = width;
 
-    data->R = R;
-    data->G = G;
-    data->B = B;
-    data->A = A;
-    
-    return ret;
+    line->R = R;
+    line->G = G;
+    line->B = B;
+    line->A = A;
+
+    struct RenderData* data = &RN_buffer[RN_bufferSize++];
+
+    data->dataIdx = (RN_lineCount++);
+    data->dataType = RN_LINE;
+    data->distance = distance;
 }
 
-struct RenderData RN_textureToData(GLuint textureId,
+void RN_AppendTexture(GLuint textureId,
                                 float x, float y,
                                 float width, float height,
                                 float distance) {
+
+    struct TextureData* texture = &RN_textureBuffer[RN_textureCount];
+
+    texture->textureId = textureId;
+
+    texture->x = x;
+    texture->y = y;
+
+    texture->width = width;
+    texture->height = height;
+
     struct RenderData ret;
     ret.dataType = RN_TEXTURE;
     ret.distance = distance;
 
-    ret.data = malloc(sizeof(struct TextureData));
-    struct TextureData* data = ret.data;
+    struct RenderData* data = &RN_buffer[RN_bufferSize++];
 
-    data->textureId = textureId;
-    
-    data->x = x;
-    data->y = y;
-    data->width = width;
-    data->height = height;
-
-    return ret;
-}
-
-void RN_delete(struct RenderData* a) {
-    free(a->data);
-    a->data = NULL;
-}
-
-void RN_append(struct RenderData data) {
-    RN_buffer[RN_bufferSize++] = data;
+    data->dataIdx = (RN_textureCount++);
+    data->dataType = RN_TEXTURE;
+    data->distance = distance;
 }
 
 int RN_comp(const void* a, const void* b) {
@@ -77,12 +79,12 @@ void RN_render() {
     for(int i = 0; i < RN_bufferSize; i++) {
         switch(RN_buffer[i].dataType) {
             case RN_TEXTURE:
-                struct TextureData* data = RN_buffer[i].data;
+                struct TextureData* data = &RN_textureBuffer[RN_buffer[i].dataIdx];
                 //TODO render the texture
                 break;
 
             case RN_LINE: {
-                struct LineData* data = RN_buffer[i].data;
+                struct LineData* data = &RN_lineBuffer[RN_buffer[i].dataIdx];
 
                 glLineWidth(data->width);
                 glColor4ub(data->R, data->G, data->B, data->A);
@@ -98,9 +100,9 @@ void RN_render() {
                 fprintf(stderr, "wrong or unimplemented render object type");
                 exit(1);
         }
-
-        RN_delete(&RN_buffer[i]);
     }
     
     RN_bufferSize = 0;
+    RN_lineCount = 0;
+    RN_textureCount = 0;
 }

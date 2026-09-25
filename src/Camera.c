@@ -153,13 +153,13 @@ void CAM_draw(struct Camera* cam){
             needCleanup = DEBUG_showTileDistance;
         #endif
 
-        RN_append(RN_lineToData(
+        RN_AppendLine(
             xOff + scale*ray, drawStart,
             xOff + scale*ray, drawEnd,
             lineScale,
             0, 0, (127 << hitdata.side), 255,
             hitdata.distance
-        ));
+        );
     }
 }
 

@@ -2,13 +2,16 @@
 #define RENDERER
 #include "Global.h"
 
-#define RN_BUFFER_CAPACITY 16384
+
+#define RN_LINE_CAPACITY 16384
+#define RN_TEXTURE_CAPACITY 16384
+#define RN_BUFFER_CAPACITY (RN_LINE_CAPACITY + RN_TEXTURE_CAPACITY)
 
 #define RN_TEXTURE 0
 #define RN_LINE 1
 struct RenderData {
-    void* data;
     float distance;
+    int dataIdx;
     byte dataType;
 };
 
@@ -25,19 +28,17 @@ struct TextureData {
     float width, height;
 };
 
-struct RenderData RN_lineToData(float x1, float y1,
+void RN_AppendLine(float x1, float y1,
                                 float x2, float y2,
                                 float width,
                                 byte R, byte G, byte B, byte A,
                                 float distance);
 
-struct RenderData RN_textureToData(GLuint textureId,
+void RN_AppendTexture(GLuint textureId,
                                 float x, float y,
                                 float width, float height,
                                 float distance);
 
-void RN_delete(struct RenderData* a);
-void RN_append(struct RenderData data);
 void RN_render();
 
 
