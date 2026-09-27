@@ -33,6 +33,14 @@ extern float dt;
 
 extern int screenWidth, screenHeight;
 
+struct Color {
+    byte r, g, b, a;
+};
+
+// alpha blend
+struct Color blend(struct Color back, struct Color front);
+
+
 #ifdef DEBUG_FEATURES
     extern int stkPtr;
     extern float stkX1[DEFAULT_BASE_WIDTH+10];

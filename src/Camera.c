@@ -3,7 +3,7 @@
 #include "Map.h"
 #include "Renderer.h"
 
-struct HitData CAM_Ray_Cast(float tileRenderDistanceSquared, float posX, float posY, float rayDirX, float rayDirY){
+struct HitData CAM_Ray_Cast(float renderDistanceSquared, float posX, float posY, float rayDirX, float rayDirY){
     struct HitData ret;
 
     ret.hit_block_x = (int)posX;
@@ -59,7 +59,7 @@ struct HitData CAM_Ray_Cast(float tileRenderDistanceSquared, float posX, float p
 
         ret.distance = (ret.side == 0) ? (totalDistX-deltaDistX) : (totalDistY-deltaDistY);
         
-        if(ret.distance * ret.distance * dirSqr > tileRenderDistanceSquared) {
+        if(ret.distance * ret.distance * dirSqr > renderDistanceSquared) {
             ret.side = (byte)-1;
             break;
         }
@@ -125,13 +125,19 @@ void CAM_draw(struct Camera* cam){
     int lineScale = ceilf(scale);
     xOff += (lineScale-1)/2;
 
+    
+    float renderDistanceSquared = cam->renderDistance * cam->renderDistance;
+    float fogStartDist = cam->renderDistance * cam->fogStartDist;
+    float fogStartDistSq = fogStartDist*fogStartDist;
+    float fogSize = cam->renderDistance - fogStartDist;
+
     for(int ray = 0; ray < cam->baseWidth; ray++) { // cast the rays
         float camX = 2*ray/(float)cam->baseWidth -1;
         float rayDirX = cam->dirX + cam->planeX * camX;
         float rayDirY = cam->dirY + cam->planeY * camX;
 
         struct HitData hitdata = CAM_Ray_Cast(
-            cam->tileRenderDistanceSquared,
+            renderDistanceSquared,
             cam->posX/squareWidth, cam->posY/squareHeight,
             rayDirX, rayDirY
         );
@@ -158,11 +164,21 @@ void CAM_draw(struct Camera* cam){
         float drawStart = yOff + (effectiveHeight - lineHeight)/2.f;
         float drawEnd = yOff + (effectiveHeight + lineHeight)/2.f;
 
+        float distSq = hitdata.distance * hitdata.distance *
+            (rayDirX * rayDirX + rayDirY * rayDirY);
+
+        struct Color lineColor = {0, 0, (127 << hitdata.side), 255};
+        if(distSq >= fogStartDistSq) {
+            struct Color fogBlend = cam->fogColor;
+            fogBlend.a = (byte)roundf(fogBlend.a * (sqrtf(distSq) - fogStartDist)/fogSize);
+            lineColor = blend(lineColor, fogBlend);
+        }
+
         RN_AppendLine(
             xOff + scale*ray, drawStart,
             xOff + scale*ray, drawEnd,
             lineScale,
-            0, 0, (127 << hitdata.side), 255,
+            lineColor,
             hitdata.distance
         );
     }
@@ -189,15 +205,17 @@ void CAM_init(struct Camera* cam) {
     cam->FOV = RAD_90;
     CAM_setDirection(cam, 0);
 
-    CAM_setTileRenderDistance(cam, CAM_DEFAULT_TILE_RENDER_DISTANCE);
+    cam->renderDistance = CAM_DEFAULT_RENDER_DISTANCE;
+    cam->fogStartDist = 0.75;
+
+    cam->fogColor.r = 0x00;
+    cam->fogColor.g = 0x00;
+    cam->fogColor.b = 0x00;
+    cam->fogColor.a = 0xFF;
 }
 
 void CAM_followPlayer(struct Camera* cam, struct Player* p) {
     cam->posX = p->x;
     cam->posY = p->y;
     CAM_setDirection(cam, p->thetaX);
-}
-
-void CAM_setTileRenderDistance(struct Camera* cam, float distance) {
-    cam->tileRenderDistanceSquared = distance*distance;
 }

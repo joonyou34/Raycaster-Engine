@@ -19,6 +19,7 @@ struct LineData {
     float x1, y1;
     float x2, y2;
     float width;
+    struct Color color;
     byte R, G, B, A;
 };
 
@@ -31,7 +32,7 @@ struct TextureData {
 void RN_AppendLine(float x1, float y1,
                                 float x2, float y2,
                                 float width,
-                                byte R, byte G, byte B, byte A,
+                                struct Color color,
                                 float distance);
 
 void RN_AppendTexture(GLuint textureId,

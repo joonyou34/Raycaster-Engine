@@ -4,21 +4,25 @@
 #include "Global.h"
 #include "Player.h"
 
-#define CAM_DEFAULT_TILE_RENDER_DISTANCE 8
+#define CAM_DEFAULT_RENDER_DISTANCE 8
 
 struct Player;
 
 struct Camera {
-    float tileRenderDistanceSquared;
+    float renderDistance; // distance in tiles
 
     float posX, posY;
     float FOV;
     float dirX, dirY; 
     float planeX, planeY;
 
+    float fogStartDist; // relative to render distance
+
     float screenTopLeftX, screenTopLeftY; // from 0.0 to 1.0
     float screenSize; // from 0.0 to 1.0 --> the percentage of the screen filled
     int baseWidth, baseHeight; // the selected resoluton (before scaling up to screen)
+
+    struct Color fogColor;
 };
 
 struct HitData{ // *not hitman related*
@@ -28,10 +32,9 @@ struct HitData{ // *not hitman related*
 };
 
 void CAM_init(struct Camera* cam);
-struct HitData CAM_Ray_Cast(float tileRenderDistanceSquared, float posX, float posY, float rayDirX, float rayDirY);
+struct HitData CAM_Ray_Cast(float renderDistanceSquared, float posX, float posY, float rayDirX, float rayDirY);
 void CAM_draw(struct Camera* cam);
 void CAM_setDirection(struct Camera* cam, float theta);
 void CAM_followPlayer(struct Camera* cam, struct Player* p);
-void CAM_setTileRenderDistance(struct Camera* cam, float distance);
 
 #endif

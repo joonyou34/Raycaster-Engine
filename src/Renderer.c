@@ -12,7 +12,7 @@ int RN_bufferSize;
 void RN_AppendLine(float x1, float y1,
                                 float x2, float y2,
                                 float width,
-                                byte R, byte G, byte B, byte A,
+                                struct Color color,
                                 float distance) {
 
     struct LineData* line = &RN_lineBuffer[RN_lineCount];
@@ -24,10 +24,7 @@ void RN_AppendLine(float x1, float y1,
 
     line->width = width;
 
-    line->R = R;
-    line->G = G;
-    line->B = B;
-    line->A = A;
+    line->color = color;
 
     struct RenderData* data = &RN_buffer[RN_bufferSize++];
 
@@ -87,7 +84,7 @@ void RN_render() {
                 struct LineData* data = &RN_lineBuffer[RN_buffer[i].dataIdx];
 
                 glLineWidth(data->width);
-                glColor4ub(data->R, data->G, data->B, data->A);
+                glColor4ub(data->color.r, data->color.g, data->color.b, data->color.a);
                 //! consider optimizng this so you don't call glBegin and glEnd for every single object/line
                 glBegin(GL_LINES);
                 glVertex2f(data->x1, data->y1);
