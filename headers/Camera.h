@@ -4,9 +4,13 @@
 #include "Global.h"
 #include "Player.h"
 
+#define CAM_DEFAULT_TILE_RENDER_DISTANCE 8
+
 struct Player;
 
 struct Camera {
+    double tileRenderDistanceSquared;
+
     float posX, posY;
     float FOV;
     float dirX, dirY; 
@@ -18,15 +22,16 @@ struct Camera {
 };
 
 struct HitData{ // *not hitman related*
-    int side;
-    int hit_block_x, hit_block_y;
     float distance;
+    int hit_block_x, hit_block_y;
+    byte side; // -1 (255) for no hit --- careful when changing the datatype, update the -1 checks/sets
 };
 
 void CAM_init(struct Camera* cam);
-struct HitData CAM_Ray_Cast(float posX, float posY, float rayDirX, float rayDirY);
+struct HitData CAM_Ray_Cast(double tileRenderDistanceSquared, float posX, float posY, float rayDirX, float rayDirY);
 void CAM_draw(struct Camera* cam);
 void CAM_setDirection(struct Camera* cam, float theta);
 void CAM_followPlayer(struct Camera* cam, struct Player* p);
+void CAM_setTileRenderDistance(struct Camera* cam, float distance);
 
 #endif

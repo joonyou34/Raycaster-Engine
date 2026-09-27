@@ -3,7 +3,7 @@
 #include "Map.h"
 #include "Renderer.h"
 
-struct HitData CAM_Ray_Cast(float posX, float posY, float rayDirX, float rayDirY){
+struct HitData CAM_Ray_Cast(double tileRenderDistanceSquared, float posX, float posY, float rayDirX, float rayDirY){
     struct HitData ret;
 
     ret.hit_block_x = (int)posX;
@@ -55,12 +55,17 @@ struct HitData CAM_Ray_Cast(float posX, float posY, float rayDirX, float rayDirY
             ret.side = 0;
         }
 
-        if(map[ret.hit_block_y][ret.hit_block_x]) {
-            if(ret.side == 0)
-                ret.distance = (totalDistX-deltaDistX);
-            else
-                ret.distance = (totalDistY-deltaDistY);
+        ret.distance = (ret.side == 0) ? (totalDistX-deltaDistX) : (totalDistY-deltaDistY);
 
+        float dx = rayDirX * ret.distance;
+        float dy = rayDirY * ret.distance;
+        
+        if((double)dx*dx + dy*dy > tileRenderDistanceSquared) {
+            ret.side = (byte)-1;
+            break;
+        }
+
+        if(map[ret.hit_block_y][ret.hit_block_x]) {
             #ifdef DEBUG_FEATURES
                 // setting tile value based on distance
                 if(DEBUG_showTileDistance)
@@ -70,11 +75,6 @@ struct HitData CAM_Ray_Cast(float posX, float posY, float rayDirX, float rayDirY
             break;
         }
     }
-
-    if(ret.side == 0)
-        ret.distance = (totalDistX-deltaDistX);
-    else
-        ret.distance = (totalDistY-deltaDistY);
     
     return ret;
 }
@@ -131,11 +131,11 @@ void CAM_draw(struct Camera* cam){
         float rayDirX = cam->dirX + cam->planeX * camX;
         float rayDirY = cam->dirY + cam->planeY * camX;
 
-        struct HitData hitdata = CAM_Ray_Cast(cam->posX/squareWidth, cam->posY/squareHeight, rayDirX, rayDirY);
-
-        float lineHeight = effectiveHeight/max(hitdata.distance, 1.f);
-        float drawStart = yOff + (effectiveHeight - lineHeight)/2.f;
-        float drawEnd = yOff + (effectiveHeight + lineHeight)/2.f;
+        struct HitData hitdata = CAM_Ray_Cast(
+            cam->tileRenderDistanceSquared,
+            cam->posX/squareWidth, cam->posY/squareHeight,
+            rayDirX, rayDirY
+        );
 
         #ifdef DEBUG_FEATURES
             if(DEBUG_showRaycasterRays) { // debugging raycasting rays
@@ -152,6 +152,12 @@ void CAM_draw(struct Camera* cam){
 
             needCleanup = DEBUG_showTileDistance;
         #endif
+
+        if(hitdata.side == (byte)-1) continue;
+
+        float lineHeight = effectiveHeight/max(hitdata.distance, 1.f);
+        float drawStart = yOff + (effectiveHeight - lineHeight)/2.f;
+        float drawEnd = yOff + (effectiveHeight + lineHeight)/2.f;
 
         RN_AppendLine(
             xOff + scale*ray, drawStart,
@@ -183,10 +189,16 @@ void CAM_init(struct Camera* cam) {
     cam->posY = DEFAULT_BASE_HEIGHT / 2.f;
     cam->FOV = RAD_90;
     CAM_setDirection(cam, 0);
+
+    CAM_setTileRenderDistance(cam, CAM_DEFAULT_TILE_RENDER_DISTANCE);
 }
 
 void CAM_followPlayer(struct Camera* cam, struct Player* p) {
     cam->posX = p->x;
     cam->posY = p->y;
     CAM_setDirection(cam, p->thetaX);
+}
+
+void CAM_setTileRenderDistance(struct Camera* cam, float distance) {
+    cam->tileRenderDistanceSquared = (double)distance*distance;
 }
