@@ -9,7 +9,7 @@
 struct Player;
 
 struct Camera {
-    double tileRenderDistanceSquared;
+    float tileRenderDistanceSquared;
 
     float posX, posY;
     float FOV;
@@ -28,7 +28,7 @@ struct HitData{ // *not hitman related*
 };
 
 void CAM_init(struct Camera* cam);
-struct HitData CAM_Ray_Cast(double tileRenderDistanceSquared, float posX, float posY, float rayDirX, float rayDirY);
+struct HitData CAM_Ray_Cast(float tileRenderDistanceSquared, float posX, float posY, float rayDirX, float rayDirY);
 void CAM_draw(struct Camera* cam);
 void CAM_setDirection(struct Camera* cam, float theta);
 void CAM_followPlayer(struct Camera* cam, struct Player* p);

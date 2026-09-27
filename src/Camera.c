@@ -3,7 +3,7 @@
 #include "Map.h"
 #include "Renderer.h"
 
-struct HitData CAM_Ray_Cast(double tileRenderDistanceSquared, float posX, float posY, float rayDirX, float rayDirY){
+struct HitData CAM_Ray_Cast(float tileRenderDistanceSquared, float posX, float posY, float rayDirX, float rayDirY){
     struct HitData ret;
 
     ret.hit_block_x = (int)posX;
@@ -36,6 +36,8 @@ struct HitData CAM_Ray_Cast(double tileRenderDistanceSquared, float posX, float 
         totalDistY = (ret.hit_block_y + 1.f - posY)*deltaDistY;
     }
 
+    float dirSqr = rayDirX * rayDirX + rayDirY * rayDirY;
+
     while(1) {
         if(totalDistX < totalDistY) {
             totalDistX += deltaDistX;
@@ -56,11 +58,8 @@ struct HitData CAM_Ray_Cast(double tileRenderDistanceSquared, float posX, float 
         }
 
         ret.distance = (ret.side == 0) ? (totalDistX-deltaDistX) : (totalDistY-deltaDistY);
-
-        float dx = rayDirX * ret.distance;
-        float dy = rayDirY * ret.distance;
         
-        if((double)dx*dx + dy*dy > tileRenderDistanceSquared) {
+        if(ret.distance * ret.distance * dirSqr > tileRenderDistanceSquared) {
             ret.side = (byte)-1;
             break;
         }
@@ -200,5 +199,5 @@ void CAM_followPlayer(struct Camera* cam, struct Player* p) {
 }
 
 void CAM_setTileRenderDistance(struct Camera* cam, float distance) {
-    cam->tileRenderDistanceSquared = (double)distance*distance;
+    cam->tileRenderDistanceSquared = distance*distance;
 }
