@@ -142,6 +142,8 @@ void CAM_draw(struct Camera* cam){
             rayDirX, rayDirY
         );
 
+        if(hitdata.side == (byte)-1) continue;
+
         #ifdef DEBUG_FEATURES
             if(DEBUG_showRaycasterRays) { // debugging raycasting rays
                 stkX1[stkPtr] = cam->posX;
@@ -158,7 +160,6 @@ void CAM_draw(struct Camera* cam){
             needCleanup = DEBUG_showTileDistance;
         #endif
 
-        if(hitdata.side == (byte)-1) continue;
 
         float lineHeight = effectiveHeight/max(hitdata.distance, 1.f);
         float drawStart = yOff + (effectiveHeight - lineHeight)/2.f;
@@ -167,7 +168,7 @@ void CAM_draw(struct Camera* cam){
         float distSq = hitdata.distance * hitdata.distance *
             (rayDirX * rayDirX + rayDirY * rayDirY);
 
-        struct Color lineColor = {0, 0, (127 << hitdata.side), 255};
+        struct Color lineColor = {0, 0, (0x7F << hitdata.side), 0xFF};
         if(distSq >= fogStartDistSq) {
             struct Color fogBlend = cam->fogColor;
             fogBlend.a = (byte)roundf(fogBlend.a * (sqrtf(distSq) - fogStartDist)/fogSize);
@@ -206,7 +207,7 @@ void CAM_init(struct Camera* cam) {
     CAM_setDirection(cam, 0);
 
     cam->renderDistance = CAM_DEFAULT_RENDER_DISTANCE;
-    cam->fogStartDist = 0.75;
+    cam->fogStartDist = 0.75f;
 
     cam->fogColor.r = 0x00;
     cam->fogColor.g = 0x00;
