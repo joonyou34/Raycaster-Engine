@@ -119,3 +119,19 @@ void drawRingFrom(float cx, float cy, float r1x, float r1y, float r2x, float r2y
     }
     glEnd();
 }
+
+
+void drawPartialGradiantArc(float cx, float cy, float rx, float ry, float theta, int segments,
+                            float gradiantDistancePercentage, struct Color innerColor, struct Color outerColor) {
+    
+    if(gradiantDistancePercentage < 1e-4) {
+        drawArc(cx, cy, rx, ry, theta, segments, innerColor, outerColor);
+        return;
+    }
+
+    float rx1 = gradiantDistancePercentage * rx;
+    float ry1 = gradiantDistancePercentage * ry;
+
+    drawArc(cx, cy, rx1, ry1, theta, segments, innerColor, innerColor);
+    drawRing(cx, cy, rx1, ry1, rx, ry, theta, segments, innerColor, outerColor);
+}

@@ -49,4 +49,17 @@ void drawRing(float cx, float cy, float r1x, float r1y, float r2x, float r2y, fl
 void drawRingFrom(float cx, float cy, float r1x, float r1y, float r2x, float r2y, float startTheta,
                     float theta, int segments, struct Color innerColor, struct Color outerColor);
 
+// draws an eleptic arc (a ciruclar one if rx = ry)
+// starts from angle zero and cycles in the direction:
+// - positive theta if theta is positive
+// - negative theta if theta is negative
+// the gradiant start after radial distance = gradiantDistancePercentage
+// gradiantDistancePercentage is a percentage of both rx and ry 
+// segments determine the number of triangular segments to use
+// the higher the number of segments the smoother the arc looks
+//! but, it affects performance
+//! segments < 3 would probably result in undefined behavior or weird artifacts
+void drawPartialGradiantArc(float cx, float cy, float rx, float ry, float theta, int segments,
+                            float gradiantDistancePercentage, struct Color innerColor, struct Color outerColor);
+
 #endif
