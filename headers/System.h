@@ -13,6 +13,4 @@ void updateDT();
 
 void changeFPS(unsigned short FPS);
 
-void drawCircle(float cx, float cy, float r, int num_segments);
-
 #endif

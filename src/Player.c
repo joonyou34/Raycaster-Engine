@@ -1,6 +1,7 @@
 #include "Player.h"
-#include "System.h"
 #include "Map.h"
+#include "ShapeRenderers.h"
+
 void PL_Controls(struct Player* p, unsigned char key, bool pressed) {
     if(key == p->UP_KEY)
         p->UP_HOLD = pressed;
@@ -36,9 +37,8 @@ void PL_Controls(struct Player* p, unsigned char key, bool pressed) {
         glEnd();
 
 
-        glColor3ub(255, 200, 50);
-        drawCircle(p->x, p->y, 20, 20);
-        glEnd();
+        struct Color circleColor = {255, 200, 50, 255};
+        drawArc(p->x, p->y, 20, 20, TWO_PI, 20, circleColor, circleColor);
 
         glColor3ub(0, 0, 0); 
         glPointSize(3);
